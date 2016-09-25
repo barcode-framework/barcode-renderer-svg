@@ -18,6 +18,9 @@
 }).call(this);
 
 function SVGRenderer(){
+  function round(x,p){
+    return parseFloat(x.toFixed(p))
+  }
   this.render = function(input,options){
     if(!options) options={}
     //width:300,height:200,baseline:30,withNumbers:true,quitezone:[10,10]
@@ -52,7 +55,7 @@ function SVGRenderer(){
 
           if(item.role=="ctrl" && !options.simpleText) bl=bl2
           if(w>0) {
-            st += `M ${(offset*scaleX).toFixed(options.precession)}, ${(options.height-bl-options.padding).toFixed(options.precession)} V ${options.padding} h ${(w*scaleX).toFixed(options.precession)} V ${(options.height-bl-options.padding).toFixed(options.precession)} z `
+            st += `M ${round(offset*scaleX,options.precession)}, ${round(options.height-bl-options.padding,options.precession)} V ${options.padding} h ${round(w*scaleX,options.precession)} V ${round(options.height-bl-options.padding,options.precession)} z `
           }
         }
         offset += w
@@ -60,12 +63,12 @@ function SVGRenderer(){
       svg+=`<path fill="currentColor" d="${st}"/>\n`
       var pos = startoffset + (offset-startoffset)/2
       if(options.withNumbers){
-          if(item.role!="ctrl") svg+=`<text fill="currentColor" text-anchor="middle" x="${(pos*scaleX).toFixed(options.precession)}" y="${(options.height-options.baseline/4).toFixed(options.precession)}" font-size="${(bl*0.8).toFixed(options.precession)}">${item.symbol}</text>`
+          if(item.role!="ctrl") svg+=`<text fill="currentColor" text-anchor="middle" x="${round(pos*scaleX,options.precession)}" y="${round(options.height-options.baseline/4,options.precession)}" font-size="${round(bl*0.8,options.precession)}">${item.symbol}</text>`
       }
 
     }
     if(options.simpleText){
-        svg+=`<text fill="currentColor"  text-anchor="middle" x="${options.width/2}" y="${options.height-options.baseline/4}" font-size="${bl*0.8}">${options.text}</text>`
+        svg+=`<text fill="currentColor"  text-anchor="middle" x="${round(options.width/2,options.precession)}" y="${round(options.height-options.baseline/4,options.precession)}" font-size="${round(bl*0.8,options.precession)}">${options.text}</text>`
     }
     svg+=`</g></svg>`
     return svg
