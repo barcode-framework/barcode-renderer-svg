@@ -19,14 +19,24 @@
 
 function SVGRenderer(){
   this.render = function(input,options){
-    if(!options) options={width:300,height:200,baseline:30,withNumbers:true}
+    if(!options) options={}
+    //width:300,height:200,baseline:30,withNumbers:true,quitezone:[10,10]
+    options.width = options.width!=undefined  ? options.width : 300
+    options.height = options.height!=undefined  ? options.height : 200
+    options.baseline = options.baseline!=undefined  ? options.baseline : 30
+    options.withNumbers = options.withNumbers!=undefined ? options.withNumbers : true
+    options.quitezone = options.quitezone!=undefined  ? options.quitezone : [10,10]
+    options.padding = options.padding!=undefined  ? options.padding : 0
+    options.simpleText = options.simpleText!=undefined  ? options.simpleText : false
+    options.class = options.class!=undefined ? options.class : ""
+    if(options.simpleText) options.withNumbers=false
     var tl=0
     for(let i=0;i<input.length;i++){
       tl+=input[i].bars.length
     }
-    var scaleX = (options.width)/(tl+10)
-    var svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}"><g >`
-    var offset = 10
+    var scaleX = (options.width)/(tl+options.quitezone[0]+options.quitezone[1])
+    var svg=`<svg class="${options.class}" xmlns="http://www.w3.org/2000/svg" width="${options.width}" height="${options.height}"><g >`
+    var offset = options.quitezone[0]
     for(let j=0;j<input.length;j++){
       var startoffset=offset
       var bl = options.baseline
@@ -39,18 +49,22 @@ function SVGRenderer(){
         if ( i%2 == first) {
         } else {
 
-          if(item.role=="ctrl") bl=bl2
+          if(item.role=="ctrl" && !options.simpleText) bl=bl2
           if(w>0) {
-            st += `M ${offset*scaleX}, ${options.height-bl} V ${0} h ${w*scaleX} V ${options.height-bl} z `
+            st += `M ${offset*scaleX}, ${options.height-bl-options.padding} V ${options.padding} h ${w*scaleX} V ${options.height-bl-options.padding} z `
           }
         }
         offset += w
       }
-      svg+=`<path d="${st}"/>\n`
+      svg+=`<path fill="currentColor" d="${st}"/>\n`
       var pos = startoffset + (offset-startoffset)/2
       if(options.withNumbers){
-          if(item.role!="ctrl") svg+=`<text text-anchor="middle" x="${pos*scaleX}" y="${options.height}" font-size="${bl}">${item.symbol}</text>`
+          if(item.role!="ctrl") svg+=`<text fill="currentColor" text-anchor="middle" x="${pos*scaleX}" y="${options.height-options.baseline/4}" font-size="${bl*0.8}">${item.symbol}</text>`
       }
+
+    }
+    if(options.simpleText){
+        svg+=`<text fill="currentColor"  text-anchor="middle" x="${options.width/2}" y="${options.height-options.baseline/4}" font-size="${bl*0.8}">${options.text}</text>`
     }
     svg+=`</g></svg>`
     return svg
