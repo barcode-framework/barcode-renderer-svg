@@ -29,6 +29,7 @@ function SVGRenderer(){
     options.padding = options.padding!=undefined  ? options.padding : 0
     options.simpleText = options.simpleText!=undefined  ? options.simpleText : false
     options.class = options.class!=undefined ? options.class : ""
+    options.precession = options.precession!=undefined ? options.precession : 2
     if(options.simpleText) options.withNumbers=false
     var tl=0
     for(let i=0;i<input.length;i++){
@@ -51,7 +52,7 @@ function SVGRenderer(){
 
           if(item.role=="ctrl" && !options.simpleText) bl=bl2
           if(w>0) {
-            st += `M ${offset*scaleX}, ${options.height-bl-options.padding} V ${options.padding} h ${w*scaleX} V ${options.height-bl-options.padding} z `
+            st += `M ${(offset*scaleX).toFixed(options.precession)}, ${(options.height-bl-options.padding).toFixed(options.precession)} V ${options.padding} h ${(w*scaleX).toFixed(options.precession)} V ${(options.height-bl-options.padding).toFixed(options.precession)} z `
           }
         }
         offset += w
@@ -59,7 +60,7 @@ function SVGRenderer(){
       svg+=`<path fill="currentColor" d="${st}"/>\n`
       var pos = startoffset + (offset-startoffset)/2
       if(options.withNumbers){
-          if(item.role!="ctrl") svg+=`<text fill="currentColor" text-anchor="middle" x="${pos*scaleX}" y="${options.height-options.baseline/4}" font-size="${bl*0.8}">${item.symbol}</text>`
+          if(item.role!="ctrl") svg+=`<text fill="currentColor" text-anchor="middle" x="${(pos*scaleX).toFixed(options.precession)}" y="${(options.height-options.baseline/4).toFixed(options.precession)}" font-size="${(bl*0.8).toFixed(options.precession)}">${item.symbol}</text>`
       }
 
     }
